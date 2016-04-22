@@ -2,7 +2,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Fossbyte extends CI_Controller {
 
     public function index($cate = 0) {
         $this->load->helper(array('javelin'));
@@ -11,14 +11,13 @@ class Welcome extends CI_Controller {
         //$this->get_category();
         // for($i = 1; $i < 3; $i++){ 
         // 	$this->run_process($i);
-        // }  
+        // } 
+
         $this->load->model('cate_model');
         $category = $this->cate_model->list_all();
         foreach ($category as $cate) {
-            echo $cate->id . '-' . $cate->status;
-            echo "=============";
+            echo $cate->id . "<br/>";
             if ($cate->status == 0) {
-
                 $this->run_process($cate->id, 1);
             }
         }
@@ -39,8 +38,7 @@ class Welcome extends CI_Controller {
         $this->load->model('content_model');
         $this->load->helper('slug');
         $link = $this->cate_model->get_url($cateid);
-
-
+        echo $link;
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl, CURLOPT_HEADER, false);
@@ -50,27 +48,26 @@ class Welcome extends CI_Controller {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         $str = curl_exec($curl);
         curl_close($curl);
-
         $html = str_get_html($str);
-
         $post_title = null;
         $post_cateid = $cateid;
         $post_img_thumb = null;
         $post_img = null;
         $post_des = null;
-        $post_content = null; 
-        
-        if (empty($html->find('div.oneblog')) !== true) {
-            foreach ($html->find('div.oneblog') as $e) {
+        $post_content = null;
+
+        if ($html->find('article')) {
+            foreach ($html->find('article') as $e) {
                 $content = str_get_html($e->innertext);
 
                 // get Title 
-                foreach ($content->find('div.oneblog_titlearea') as $title) {
+                foreach ($content->find('h2.post-title') as $title) {
                     $url_link = str_get_html($title);
                     foreach ($url_link->find('a') as $url) {
-                        //    echo "<b>url:</b> " . $url->href . "<br>";
+                        // echo "<b>url:</b> " . $url->href . "<br>";
                         //Get details content and insert it now
                         $post_content = $this->get_content_details($url->href);
+                        echo "<br>";
                     }
                     echo "<b>title:</b> " . $title->plaintext . "<br>";
                     $post_title = $title->plaintext;
@@ -78,36 +75,41 @@ class Welcome extends CI_Controller {
 
                 // Get Image thumb
                 foreach ($content->find('img') as $image) {
-                    // echo "<b>img:</b> " . $image->src . '<br>';
-                    $post_img_thumb = $image->src;
-                    $post_img = str_replace("_thumbnail", "", $image->src);
+                    //echo "<b>img:</b> " . 'http:' . $image->src . '<br>';
+                    $post_img_thumb = 'http:' . $image->src;
+                    // $post_img = str_replace("_thumbnail", "", $image->src);
                 }
 
                 //Get description 
-                foreach ($content->find('div.excerpt') as $desp) {
-                    //  echo "<b>Des:</b>" . str_replace("Continue Reading", "", $content->plaintext) . '<br/>';
+                foreach ($content->find(' .excerpt') as $desp) {
+                    // echo "<b>Des:</b>" . str_replace("Continue Reading", "", $content->plaintext) . '<br/>';
                     $post_des = str_replace("Continue Reading", "", $content->plaintext);
                 }
 
                 echo "==================" . $page . "======================<br>";
+
                 $data = array(
                     'slug' => create_slug($post_title),
                     'title' => $post_title,
                     'cateid' => $post_cateid,
                     'image_thumb' => $post_img_thumb,
-                    'image_link' => $post_img,
+                    'image_link' => $post_img_thumb,
                     'des' => $post_des,
                     'content' => $post_content,
                     'status' => 1,
                 );
-                $result = $this->content_model->insert($data);
+                if ($post_content <> null) {
+                    $result = $this->content_model->insert($data);
+                }
             }
+            // $cateid = 0;
             $new_page = $page + 1;
-            echo '<meta http-equiv="refresh" content="2;URL=' . site_url('welcome/run_process/' . $cateid . '/' . $new_page) . '">';
+
+            echo '<meta http-equiv="refresh" content="2;URL=' . site_url('fossbyte/run_process/') . '/' . $cateid . '/' . $new_page . '">';
         } else {
-            //$this->get_category();
+            $this->get_category();
             $this->cate_model->update_status($cateid);
-            echo '<meta http-equiv="refresh" content="2;URL=' . site_url('welcome/index') . '">';
+            echo '<meta http-equiv="refresh" content="2;URL=' . site_url('fossbyte/index') . '">';
         }
         //$next_page = $page + 1; 
         //redirect("Welcome/index/".$next_page); 
@@ -120,11 +122,11 @@ class Welcome extends CI_Controller {
     function get_category() {
         $this->load->helper(array('simple_html_dom'));
 
-        $html = file_get_html('http://graphicdesignjunction.com');
+        $html = file_get_html('http://fossbytes.com/');
         $this->load->helper('url');
         $this->load->helper('javelin');
 
-        foreach ($html->find('div#navbar') as $e) {
+        foreach ($html->find('ul#menu-menu-1') as $e) {
             $url_link = str_get_html($e);
             foreach ($url_link->find('a') as $url) {
                 echo "<b>url:</b> " . $url->href . "<br>";
@@ -158,11 +160,11 @@ class Welcome extends CI_Controller {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
         $str = curl_exec($curl);
         curl_close($curl);
- 
+
         $html = str_get_html($str);
         $content_main = null;
-        foreach ($html->find('div.the_content') as $content) {
-            //  echo "<b>Content: </b>" . $content->plaintext;
+        foreach ($html->find('div.entry-inner') as $content) {
+            // echo "<b>Content: </b>" . $content->plaintext;
             $content_main = $content->plaintext;
         }
         return $content_main;
