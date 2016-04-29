@@ -57,12 +57,12 @@ class Cate_model extends CI_Model {
 
     public function update_status($cateid) {
         $data = array(
-            'status' => 1, 
+            'status' => 1,
         );
         $this->db->where('id', $cateid);
         $this->db->update('category', $data);
     }
+     
 
-}
-
+} 
 ?>
