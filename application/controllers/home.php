@@ -17,12 +17,20 @@ class Home extends CI_Controller {
         date_default_timezone_set('UTC');
     }
 
-    public function index( ) {  
-        
+    public function index() {  
+        $this->load->model('cate_model');
+        $this->load->model('content_model');
+        $data['']= $this->content_model->load_news_post_slide();
+        $data['lastest_post'] = $this->content_model->load_lastest_post();
+        $data['list_categories'] = $this->cate_model->list_category();
+        $this->load->view('home/index',$data);
+    }
+    
+    public function details($id){
         $this->load->view('home/index');
     }
     
-    public function details(){
+    public function category($id){
         $this->load->view('home/index');
     }
 

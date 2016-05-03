@@ -10,6 +10,29 @@ class Content_model extends CI_Model {
         $this->load->database();
     }
     
+    public function load_lastest_post(){
+        $this->db->limit(5);
+        $this->db->order_by('id', "desc");
+        $query = $this->db->get('content');
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return 0;
+        }
+    }
+    
+    public function load_news_post_slide(){
+        $this->db->limit(5);
+        $this->db->order_by('id', "desc");
+        $query = $this->db->get('content');
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return 0;
+        }
+    }
+    
+    
     public function insert($data) {
         $id = 0;
         $query = $this->db->get_where('content', array('slug' => $data['slug']));

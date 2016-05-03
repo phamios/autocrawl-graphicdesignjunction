@@ -4,56 +4,20 @@
         <div class="latest_post_container">
             <div id="prev-button"><i class="fa fa-chevron-up"></i></div>
             <ul class="latest_postnav">
+               <?php foreach($lastest_post as $lastpost):?>
                 <li>
                     <div class="media">
-                        <a href="single_page.html" class="media-left">
-                            <img alt="img" src="<?php echo base_url('res/home'); ?>/img/post_img1.jpg">
+                        <a href="<?php echo site_url(trim(strtolower($lastpost->title)).'.html')?>" class="media-left">
+                            <img alt="img" src="<?php echo $lastpost->image_thumb ?>" />
                         </a>
                         <div class="media-body">
-                            <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 1</a>                        
+                            <a href="<?php echo site_url(trim(strtolower($lastpost->title)).'.html')?>" class="catg_title">
+                                <?php echo trim(strtolower($lastpost->title))?>
+                            </a>                        
                         </div>
                     </div>
                 </li>
-                <li>
-                    <div class="media">
-                        <a href="single_page.html" class="media-left">
-                            <img alt="img" src="<?php echo base_url('res/home'); ?>/img/post_img1.jpg">
-                        </a>
-                        <div class="media-body">
-                            <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 2</a>                        
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="media">
-                        <a href="single_page.html" class="media-left">
-                            <img alt="img" src="<?php echo base_url('res/home'); ?>/img/post_img1.jpg">
-                        </a>
-                        <div class="media-body">
-                            <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 3</a>                        
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="media">
-                        <a href="single_page.html" class="media-left">
-                            <img alt="img" src="<?php echo base_url('res/home'); ?>/img/post_img1.jpg">
-                        </a>
-                        <div class="media-body">
-                            <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 4</a>                        
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="media">
-                        <a href="single_page.html" class="media-left">
-                            <img alt="img" src="<?php echo base_url('res/home'); ?>/img/post_img1.jpg">
-                        </a>
-                        <div class="media-body">
-                            <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 2</a>                        
-                        </div>
-                    </div>
-                </li>
+                 <?php endforeach;?>
             </ul>
             <div id="next-button"><i class="fa  fa-chevron-down"></i></div>
         </div>

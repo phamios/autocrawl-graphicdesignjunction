@@ -20,6 +20,17 @@ class Cate_model extends CI_Model {
             return 0;
         }
     }
+    
+     public function list_category() {
+         $this->db->limit(20);
+        $this->db->order_by('id', "asc");
+        $query = $this->db->get('category');
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return 0;
+        }
+    }
 
     public function get_url($cateid) {
         $query = $this->db->get_where('category', array('id' => $cateid));
