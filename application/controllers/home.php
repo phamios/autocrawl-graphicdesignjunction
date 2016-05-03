@@ -23,7 +23,14 @@ class Home extends CI_Controller {
         $data['']= $this->content_model->load_news_post_slide();
         $data['lastest_post'] = $this->content_model->load_lastest_post();
         $data['list_categories'] = $this->cate_model->list_category();
+        $data['get_new_post_slide'] = $this->content_model->load_newpost_slide();
+         
         $this->load->view('home/index',$data);
+    }
+    
+    public function ajax_content(){
+        $this->load->model('homecate_model');
+        $data['list_homecate'] = $this->homecate_model->list_home_cate();
     }
     
     public function details($id){
